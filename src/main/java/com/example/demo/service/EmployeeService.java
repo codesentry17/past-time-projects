@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.Actor;
 import com.example.demo.repository.EmployeeRepository;
 
+import jakarta.transaction.Transactional;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -17,12 +20,14 @@ public class EmployeeService {
         return empRep.findAll();
     }
 
-    public String getActorById(int id){
-        return "Sending data of Actor with id "+id;
+    public Optional<Actor> getActorById(int id){
+
+        return empRep.findById(id);
     }
 
-    public String createActor() {
-        return "Actor created";
+    @Transactional
+    public Actor createActor(Actor actor) {
+        return empRep.save(actor);
     }
 
     public String updateActor(int id) {
