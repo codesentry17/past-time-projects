@@ -2,15 +2,19 @@ package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.ActorDTO;
 import com.example.demo.model.Actor;
 import com.example.demo.repository.EmployeeRepository;
 
 import jakarta.transaction.Transactional;
 
+import java.lang.foreign.Linker.Option;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class EmployeeService {
 
     @Autowired
@@ -25,17 +29,30 @@ public class EmployeeService {
         return empRep.findById(id);
     }
 
-    @Transactional
-    public Actor createActor(Actor actor) {
-        return empRep.save(actor);
+    public Actor createActor(ActorDTO actor) {
+
+        return empRep.save(new Actor(
+            actor.firstName(), 
+            actor.lastName())
+        );
     }
 
-    public String updateActor(int id) {
-        return "Actor with ID " + id + " updated";
+    public Actor updateActor(int id, ActorDTO actor) {
+
+        return empRep.save(new Actor(
+                id, 
+                actor.firstName(), 
+                actor.lastName())
+            );
     }
 
-    public String deleteActor(int id) {
-        return "Actor with ID " + id + " deleted";
+    public void deleteActor(int id) {
+    
+        Optional<Actor> actor = empRep.findById(id);
+
+        if(actor.isPresent())
+            empRep.delete(actor.get());
+    
     }
 
 }
